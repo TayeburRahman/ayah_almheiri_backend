@@ -1,55 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-unused-vars */
 import { Document, Model } from 'mongoose';
+
 export type IEmailOptions = {
   email: string;
   subject: string;
-  // template: string;
-  // data?: { [key: string]: any };
-  html: any;
-};
-export type IRegistration = {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  avatar?: string;
-  phone_number?: string;
-  role?: string;
-};
-export type IActivationToken = {
-  token: string;
-  activationCode: string;
-};
-export type IActivationRequest = {
-  userEmail: string;
-  activation_code: string;
-};
-export type IReqUser = {
-  userId: string;
-  authId: string;
-  role: string;
-};
-
-export type Ireting = {
-  userId: string;
+  html: string;
 };
 
 export type IAuth = Document & {
   name: string;
   email: string;
+  phone_number: string;
   password: string;
-  role: 'CUSTOMERS' | 'AGENT' | 'ADMIN' | 'SUPER_ADMIN';
-  verifyCode?: string;
-  codeVerify?: boolean;
+  role: 'CUSTOMER' | 'SHOP_OWNER' | 'ADMIN' | 'SUPER_ADMIN';
   activationCode?: string;
-  verifyExpire?: Date;
   expirationTime?: Date;
+  verifyCode?: string;
+  verifyExpire?: Date;
+  codeVerify?: boolean;
   is_block?: boolean;
   isActive?: boolean;
-  confirmPassword: string;
   profile_image: string | null;
-  [key: string]: any;
+  termsAccepted: boolean;
 };
 
 export interface IAuthModel extends Model<IAuth> {
@@ -57,11 +28,16 @@ export interface IAuthModel extends Model<IAuth> {
   isPasswordMatched(givenPassword: string, savedPassword: string): Promise<boolean>;
 }
 
+export type IReqUser = {
+  userId: string;
+  authId: string;
+  role: string;
+};
+
 export interface ActivationPayload {
   activation_code: string;
   userEmail: string;
 }
-
 
 export interface LoginPayload {
   email: string;

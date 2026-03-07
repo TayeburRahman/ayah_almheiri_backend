@@ -27,36 +27,24 @@ export const registrationSuccessEmailBody = (userData: any) => `
           line-height: 1.5;
           margin-bottom: 10px;
         }
-        .button {
-          display: inline-block;
-          padding: 10px 20px;
-          background-color: #007bff;
-          color: #fff;
-          text-decoration: none;
-          border-radius: 5px;
-          font-size: 18px;
-        }
-        .button:hover {
-          background-color: #0056b3;
-        }
-        a {
+        .code {
+          font-size: 32px;
+          font-weight: 700;
           color: #007bff;
-          text-decoration: none;
-        }
-        a:hover {
-          text-decoration: underline;
+          text-align: center;
+          margin: 20px 0;
+          letter-spacing: 6px;
         }
       </style>
     </head>
     <body>
       <div class="container">
-        <h1>Welcome to Parcel Management System</h1>
+        <h1>Welcome!</h1>
         <p>Hello ${userData?.user?.name},</p>
-        <p>Thank you for registering with Parcel Management System. To activate your account, please use the following activation code:</p>
-        <h1>${userData?.activationCode}</h1>
-        <p>Please enter this code on the activation page within the next 5 minutes.</p>
-        <p>If you didn't register for Parcel Management System, please ignore this email.</p>
-        <p>If you have any questions, please contact us at <a href="mailto:yeasinarafat1734@gmail.com">yeasinarafat1734@gmail.com</a>.</p>
+        <p>Thank you for registering. To activate your account, please use the following activation code:</p>
+        <div class="code">${userData?.activationCode}</div>
+        <p>Please enter this code on the verification screen within the next 3 minutes.</p>
+        <p>If you didn't register, please ignore this email.</p>
       </div>
     </body>
   </html>

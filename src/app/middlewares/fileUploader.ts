@@ -78,3 +78,50 @@ export const uploadFile = () => {
 
   return upload;
 };
+
+// ─── Document Uploads (business license, shop logo - PDF/JPG/PNG, max 5MB) ──
+export const uploadDocument = () => {
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      if (file.fieldname === 'business_license') {
+        cb(null, 'uploads/images/documents');
+      } else if (file.fieldname === 'shop_logo') {
+        cb(null, 'uploads/images/logos');
+      } else {
+        cb(null, 'uploads');
+      }
+    },
+    filename: function (req, file, cb) {
+      const name = Date.now() + '-' + file.originalname;
+      cb(null, name);
+    },
+  });
+
+  const fileFilter = (req: Request, file: any, cb: any) => {
+    const allowedMimes = [
+      'image/jpeg',
+      'image/png',
+      'image/jpg',
+      'application/pdf',
+    ];
+
+    if (!['business_license', 'shop_logo'].includes(file.fieldname)) {
+      return cb(new Error('Invalid fieldname'));
+    }
+    if (!allowedMimes.includes(file.mimetype)) {
+      return cb(new Error('Invalid file type. Only PDF, JPG, and PNG are allowed.'));
+    }
+    cb(null, true);
+  };
+
+  const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+  }).fields([
+    { name: 'business_license', maxCount: 1 },
+    { name: 'shop_logo', maxCount: 1 },
+  ]);
+
+  return upload;
+};

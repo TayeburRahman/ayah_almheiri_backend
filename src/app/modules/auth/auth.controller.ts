@@ -1,4 +1,3 @@
-
 import { Request, Response } from 'express';
 import catchAsync from '../../../shared/catchasync';
 import { AuthService } from './auth.service';
@@ -6,103 +5,104 @@ import sendResponse from '../../../shared/sendResponse';
 import config from '../../../config';
 import { IReqUser } from './auth.interface';
 
-const registrationAccount = catchAsync(async (req: Request, res: Response) => {
-  const { message } = await AuthService.registrationAccount(req.body);
-
+// ─── CUSTOMER REGISTER (Screen 1) ───────────────────────────────────
+const registerCustomer = catchAsync(async (req: Request, res: Response) => {
+  const result = await AuthService.registerCustomer(req.body);
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: message
+    message: result.message,
   });
 });
 
-const activateAccount = catchAsync(async (req: Request, res: Response) => {
-  const result = await AuthService.activateAccount(req.body);
-  const { refreshToken } = result;
+// ─── SHOP OWNER REGISTER (Screen 1) ─────────────────────────────────
+const registerShopOwner = catchAsync(async (req: Request, res: Response) => {
+  const result = await AuthService.registerShopOwner(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: result.message,
+  });
+});
+
+// ─── VERIFY OTP (Screen 2) ──────────────────────────────────────────
+const verifyOtp = catchAsync(async (req: Request, res: Response) => {
+  const result = await AuthService.verifyOtp({
+    activation_code: req.body.activation_code,
+    userEmail: req.body.email,
+  });
 
   const cookieOptions = {
     secure: config.env === "production",
     httpOnly: true,
   };
-  res.cookie("refreshToken", refreshToken, cookieOptions);
+  res.cookie("refreshToken", result.refreshToken, cookieOptions);
+
   sendResponse(res, {
-    statusCode: 201,
+    statusCode: 200,
     success: true,
-    message: "Activation code verified successfully.",
+    message: "Account verified successfully.",
     data: result,
   });
 });
 
+// ─── RESEND OTP ─────────────────────────────────────────────────────
+const resendOtp = catchAsync(async (req: Request, res: Response) => {
+  const result = await AuthService.resendOtp(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: result.message,
+  });
+});
+
+// ─── LOGIN ──────────────────────────────────────────────────────────
 const loginAccount = catchAsync(async (req: Request, res: Response) => {
-  const loginData = req.body;
-  const result = await AuthService.loginAccount(loginData);
-  const { refreshToken } = result;
-
+  const result = await AuthService.loginAccount(req.body);
   const cookieOptions = {
     secure: config.env === "production",
     httpOnly: true,
   };
-  res.cookie("refreshToken", refreshToken, cookieOptions);
+  res.cookie("refreshToken", result.refreshToken, cookieOptions);
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Auth logged in successfully!",
+    message: "Logged in successfully!",
     data: result,
   });
 });
 
-const changePassword = catchAsync(async (req: Request, res: Response) => {
-  const passwordData = req.body;
-  const user = req.user as IReqUser;
-  await AuthService.changePassword(user, passwordData);
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Password changed successfully!",
-  });
-});
-
+// ─── FORGOT PASSWORD ────────────────────────────────────────────────
 const forgotPass = catchAsync(async (req: Request, res: Response) => {
   await AuthService.forgotPass(req.body);
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Check your email!",
+    message: "Check your email for the reset code!",
   });
 });
 
-const checkIsValidForgetActivationCode = catchAsync(async (req: Request, res: Response) => {
-  const result = await AuthService.checkIsValidForgetActivationCode(req.body);
+// ─── VERIFY FORGOT PASSWORD OTP ─────────────────────────────────────
+const verifyForgotOtp = catchAsync(async (req: Request, res: Response) => {
+  await AuthService.checkIsValidForgetActivationCode(req.body);
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Code verified successfully",
-    data: result,
   });
 });
 
-const resendCodeActivationAccount = catchAsync(async (req: Request, res: Response) => {
-  const data = req.body;
-  const result = await AuthService.resendCodeActivationAccount(data);
+// ─── RESEND FORGOT PASSWORD CODE ────────────────────────────────────
+const resendForgotCode = catchAsync(async (req: Request, res: Response) => {
+  await AuthService.resendCodeForgotAccount(req.body);
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Resent successfully",
-    data: result,
+    message: "Code resent successfully",
   });
 });
 
-const resendCodeForgotAccount = catchAsync(async (req: Request, res: Response) => {
-  const data = req.body;
-  const result = await AuthService.resendCodeForgotAccount(data);
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Resent successfully",
-    data: result,
-  });
-});
-
+// ─── RESET PASSWORD ─────────────────────────────────────────────────
 const resetPassword = catchAsync(async (req: Request, res: Response) => {
   await AuthService.resetPassword(req as any);
   sendResponse(res, {
@@ -112,50 +112,38 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// ─── CHANGE PASSWORD ────────────────────────────────────────────────
+const changePassword = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user as IReqUser;
+  await AuthService.changePassword(user, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Password changed successfully!",
+  });
+});
+
+// ─── GET MY PROFILE ─────────────────────────────────────────────────
 const getMyProfile = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthService.myProfile(req.user as IReqUser);
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "User retrieved successfully",
+    message: "Profile retrieved successfully",
     data: result,
   });
 });
-
-const deleteMyAccount = catchAsync(async (req: Request, res: Response) => {
-  const authId = (req.user as IReqUser).authId;
-  await AuthService.deleteMyAccount(authId as any);
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Account delete successfully.",
-  });
-});
-
-const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
-  const result = await AuthService.updateMyProfile(req as any);
-
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Locations upload successfully.",
-    data: result,
-  });
-});
-
-
 
 export const AuthController = {
-  registrationAccount,
-  activateAccount,
+  registerCustomer,
+  registerShopOwner,
+  verifyOtp,
+  resendOtp,
   loginAccount,
-  changePassword,
   forgotPass,
+  verifyForgotOtp,
+  resendForgotCode,
   resetPassword,
-  checkIsValidForgetActivationCode,
-  resendCodeActivationAccount,
-  resendCodeForgotAccount,
+  changePassword,
   getMyProfile,
-  deleteMyAccount,
-  updateMyProfile
 };

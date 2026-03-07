@@ -2,8 +2,8 @@
 export enum ENUM_USER_ROLE {
   SUPER_ADMIN = 'SUPER_ADMIN',
   ADMIN = 'ADMIN',
-  CUSTOMERS = 'CUSTOMERS',
-  AGENT = 'AGENT',
+  CUSTOMER = 'CUSTOMER',
+  SHOP_OWNER = 'SHOP_OWNER',
 }
 
 export enum ENUM_SOCKET_EVENT {
@@ -14,6 +14,4 @@ export enum ENUM_SOCKET_EVENT {
   MESSAGE_NEW = "new-message",
   MESSAGE_GETALL = "message",
   CONVERSION = "conversion",
-  PARTNER_LOCATION = "partner-location",
-
-};
+}

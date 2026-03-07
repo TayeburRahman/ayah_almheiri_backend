@@ -1,9 +1,7 @@
-import mongoose, { Document, Schema, Model } from "mongoose";
-import { ICustomers } from "./customers.interface";
+import mongoose, { Schema, Model } from "mongoose";
+import { ICustomer } from "./customers.interface";
 
-
-
-const CustomersSchema = new Schema<ICustomers>(
+const CustomerSchema = new Schema<ICustomer>(
   {
     authId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -18,20 +16,13 @@ const CustomersSchema = new Schema<ICustomers>(
       type: String,
       required: true,
     },
+    phone_number: {
+      type: String,
+      required: true,
+    },
     profile_image: {
       type: String,
       default: null,
-    },
-    phone_number: {
-      type: String,
-      default: null,
-    },
-    address: {
-      type: String,
-      default: null,
-    },
-    date_of_birth: {
-      type: Date,
     },
     status: {
       type: String,
@@ -44,6 +35,6 @@ const CustomersSchema = new Schema<ICustomers>(
   }
 );
 
-const Customers: Model<ICustomers> = mongoose.model<ICustomers>("Customers", CustomersSchema);
+const Customer: Model<ICustomer> = mongoose.model<ICustomer>("Customer", CustomerSchema);
 
-export default Customers;
+export default Customer;
