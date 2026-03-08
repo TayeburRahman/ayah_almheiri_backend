@@ -35,6 +35,33 @@ router.patch(
   AdminController.updateShopOwnerDetails
 );
 
+// ─── Customer Management ────────────────────────────────────────────
+router.get(
+  "/customers",
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  AdminController.getAllCustomers
+);
+
+router.patch(
+  "/customer/blocked",
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  validateRequest(AdminValidation.blockedCustomer),
+  AdminController.blockedCustomer
+);
+
+router.get(
+  "/customer/overview",
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  AdminController.getCustomerOverview
+);
+
+router.get(
+  "/customer/:id",
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
+  validateRequest(AdminValidation.getCustomerDetails),
+  AdminController.getCustomerDetails
+);
+
 // ─── Admin Management (Super Admin only) ───────────────────────────
 router.post(
   "/create",

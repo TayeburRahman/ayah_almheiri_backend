@@ -29,6 +29,11 @@
       "key": "adminId",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "customerId",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -514,6 +519,88 @@
               "path": ["shop-owner", "branch", "{{branchId}}"]
             },
             "description": "Delete a branch. Only the owning shop owner can delete."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin - Customer Management",
+      "item": [
+        {
+          "name": "Get All Customers (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/customers?page=1&limit=10&sortBy=createdAt&sortOrder=desc&searchTerm=&status=",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "customers"],
+              "query": [
+                { "key": "page", "value": "1", "description": "Page number" },
+                { "key": "limit", "value": "10", "description": "Items per page" },
+                { "key": "sortBy", "value": "createdAt", "description": "Sort field" },
+                { "key": "sortOrder", "value": "desc", "description": "asc or desc" },
+                { "key": "searchTerm", "value": "", "description": "Search by name, email, or phone" },
+                { "key": "status", "value": "", "description": "Filter: active or deactivate (leave empty for all)" }
+              ]
+            },
+            "description": "Get paginated list of all customers with search and filter. Requires ADMIN or SUPER_ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "Block/Unblock Customer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"{{customerId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/customer/blocked",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "customer", "blocked"]
+            },
+            "description": "Toggle block/unblock for a customer. Requires ADMIN or SUPER_ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "Customer Details by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/customer/{{customerId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "customer", "{{customerId}}"]
+            },
+            "description": "Get customer details by ID. Requires ADMIN or SUPER_ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "Customer Overview",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/customer/overview",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "customer", "overview"]
+            },
+            "description": "Get customer overview stats: total customers, active customers, average orders. Requires ADMIN or SUPER_ADMIN."
           },
           "response": []
         }

@@ -73,6 +73,20 @@ const deleteAdmin = z.object({
   }),
 });
 
+// ─── Block/Unblock Customer ────────────────────────────────────────
+const blockedCustomer = z.object({
+  body: z.object({
+    id: z.string({ required_error: "Customer ID is required" }),
+  }),
+});
+
+// ─── Customer Details ──────────────────────────────────────────────
+const getCustomerDetails = z.object({
+  params: z.object({
+    id: z.string({ required_error: "Customer ID is required" }),
+  }),
+});
+
 export const AdminValidation = {
   acceptShopOwner,
   blockedShopOwner,
@@ -80,4 +94,6 @@ export const AdminValidation = {
   createAdmin,
   updateAdminProfile,
   deleteAdmin,
+  blockedCustomer,
+  getCustomerDetails,
 };

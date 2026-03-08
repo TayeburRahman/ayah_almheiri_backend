@@ -1,10 +1,10 @@
 //STARTS
-// Create Super Admin
-// A Super Admin can be create Admin
-// Update Admin/ Super Admin
-// Edit Admin/ Super Admin
-// delete Admin
 
+Customer Management
+// Get all Customer with paganationas search filter
+// Block/unblock Customer
+// Customer Details by Id
+// get Customer overview: total customar, active customar, avarage order
 
 //END
 

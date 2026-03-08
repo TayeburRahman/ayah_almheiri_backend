@@ -5,6 +5,7 @@ import { IOptions } from "../../../interfaces/paginations";
 import { ShopOwner } from "../shop_owner/shop_owner.model";
 import Auth from "../auth/auth.model";
 import Admin from "./admin.model";
+import Customer from "../customers/customers.model";
 import { ENUM_USER_ROLE } from "../../../enums/user";
 
 // ─── GET SHOP OWNER REQUESTS (pending approval) ────────────────────
@@ -190,6 +191,99 @@ const deleteAdmin = async (adminId: string) => {
   return { message: "Admin deleted successfully" };
 };
 
+// ─── GET ALL CUSTOMERS (Paginated + Search) ────────────────────────
+const getAllCustomers = async (
+  query: { searchTerm?: string; status?: string },
+  paginationOptions: IOptions
+) => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(paginationOptions);
+
+  const conditions: Record<string, any> = {};
+
+  if (query.status) {
+    conditions.status = query.status;
+  }
+
+  if (query.searchTerm) {
+    const regex = new RegExp(query.searchTerm, "i");
+    conditions.$or = [
+      { name: regex },
+      { email: regex },
+      { phone_number: regex },
+    ];
+  }
+
+  const [data, total] = await Promise.all([
+    Customer.find(conditions)
+      .populate("authId", "name email phone_number is_block isActive role")
+      .sort({ [sortBy]: sortOrder })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Customer.countDocuments(conditions),
+  ]);
+
+  return {
+    meta: { page, limit, total },
+    data,
+  };
+};
+
+// ─── BLOCK/UNBLOCK CUSTOMER ────────────────────────────────────────
+const blockedCustomer = async (payload: { id: string }) => {
+  const customer = await Customer.findById(payload.id);
+  if (!customer) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Customer not found");
+  }
+
+  const auth = await Auth.findById(customer.authId);
+  if (!auth) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Auth record not found");
+  }
+
+  auth.is_block = !auth.is_block;
+  await auth.save();
+
+  customer.status = auth.is_block ? "deactivate" : "active";
+  await customer.save();
+
+  return {
+    ...customer.toObject(),
+    is_block: auth.is_block,
+  };
+};
+
+// ─── CUSTOMER DETAILS BY ID ────────────────────────────────────────
+const getCustomerDetails = async (customerId: string) => {
+  const customer = await Customer.findById(customerId)
+    .populate("authId", "name email phone_number is_block isActive role createdAt")
+    .lean();
+
+  if (!customer) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Customer not found");
+  }
+
+  return customer;
+};
+
+// ─── CUSTOMER OVERVIEW ─────────────────────────────────────────────
+const getCustomerOverview = async () => {
+  const [totalCustomers, activeCustomers] = await Promise.all([
+    Customer.countDocuments(),
+    Customer.countDocuments({ status: "active" }),
+  ]);
+
+  // Average orders per customer (placeholder: no Order model yet)
+  const averageOrder = 0;
+
+  return {
+    totalCustomers,
+    activeCustomers,
+    averageOrder,
+  };
+};
+
 export const AdminService = {
   getShopOwnerRequests,
   acceptShopOwner,
@@ -198,4 +292,8 @@ export const AdminService = {
   createAdmin,
   updateAdminProfile,
   deleteAdmin,
+  getAllCustomers,
+  blockedCustomer,
+  getCustomerDetails,
+  getCustomerOverview,
 };

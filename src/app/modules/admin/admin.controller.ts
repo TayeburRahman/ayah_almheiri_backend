@@ -94,6 +94,60 @@ const deleteAdmin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// ─── GET ALL CUSTOMERS ──────────────────────────────────────────────
+const getAllCustomers = catchAsync(async (req: Request, res: Response) => {
+  const { searchTerm, status, page, limit, sortBy, sortOrder } =
+    req.query as Record<string, string>;
+
+  const result = await AdminService.getAllCustomers(
+    { searchTerm, status },
+    { page: Number(page), limit: Number(limit), sortBy, sortOrder: sortOrder as any }
+  );
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Customers retrieved successfully",
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
+// ─── BLOCK/UNBLOCK CUSTOMER ────────────────────────────────────────
+const blockedCustomer = catchAsync(async (req: Request, res: Response) => {
+  const result = await AdminService.blockedCustomer(req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: result.is_block
+      ? "Customer blocked successfully"
+      : "Customer unblocked successfully",
+    data: result,
+  });
+});
+
+// ─── CUSTOMER DETAILS BY ID ────────────────────────────────────────
+const getCustomerDetails = catchAsync(async (req: Request, res: Response) => {
+  const result = await AdminService.getCustomerDetails(req.params.id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Customer details retrieved successfully",
+    data: result,
+  });
+});
+
+// ─── CUSTOMER OVERVIEW ─────────────────────────────────────────────
+const getCustomerOverview = catchAsync(async (req: Request, res: Response) => {
+  const result = await AdminService.getCustomerOverview();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Customer overview retrieved successfully",
+    data: result,
+  });
+});
+
 export const AdminController = {
   getShopOwnerRequests,
   acceptShopOwner,
@@ -102,4 +156,8 @@ export const AdminController = {
   createAdmin,
   updateAdminProfile,
   deleteAdmin,
+  getAllCustomers,
+  blockedCustomer,
+  getCustomerDetails,
+  getCustomerOverview,
 };
