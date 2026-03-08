@@ -4,7 +4,7 @@ import { ENUM_USER_ROLE } from '../../../enums/user';
 import { ShopOwnerController } from './shop_owner.controller';
 import { ShopOwnerValidation } from './shop_owner.validation';
 import { validateRequest } from '../../middlewares/validateRequest';
-import { uploadDocument } from '../../middlewares/fileUploader';
+import { uploadDocument, uploadFile } from '../../middlewares/fileUploader';
 
 const router = express.Router();
 
@@ -38,6 +38,43 @@ router.post(
   auth(ENUM_USER_ROLE.SHOP_OWNER),
   uploadDocument(),
   ShopOwnerController.saveDocuments
+);
+
+// ─── Update Profile (with optional profile_image upload) ───────────
+router.patch(
+  "/profile",
+  auth(ENUM_USER_ROLE.SHOP_OWNER),
+  uploadFile(),
+  ShopOwnerController.updateProfile
+);
+
+// ─── Branch Management ─────────────────────────────────────────────
+router.post(
+  "/branch",
+  auth(ENUM_USER_ROLE.SHOP_OWNER),
+  validateRequest(ShopOwnerValidation.createBranchSchema),
+  ShopOwnerController.createBranch
+);
+
+router.delete(
+  "/branch/:branchId",
+  auth(ENUM_USER_ROLE.SHOP_OWNER),
+  validateRequest(ShopOwnerValidation.deleteBranchSchema),
+  ShopOwnerController.deleteBranch
+);
+
+router.patch(
+  "/branch/:branchId",
+  auth(ENUM_USER_ROLE.SHOP_OWNER),
+  validateRequest(ShopOwnerValidation.updateBranchSchema),
+  ShopOwnerController.updateBranch
+);
+
+router.patch(
+  "/branch/:branchId/availability",
+  auth(ENUM_USER_ROLE.SHOP_OWNER),
+  validateRequest(ShopOwnerValidation.updateBranchAvailabilitySchema),
+  ShopOwnerController.updateBranchAvailability
 );
 
 export const ShopOwnerRoutes = router;

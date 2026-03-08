@@ -1,128 +1,15 @@
 //STARTS
-
-Create register process for  Shop Owner, Customer
-/auth/shop_owner
-/auth/customers
-
-Business for
-/shop_owner/
-
-The process of Shop Owner register:
-
-Screen 1 — Sign Up
-Fields:
-Preferred Name
-Email
-Phone Number (+971)
-Password + Confirm Password (eye toggle)
-Terms & Conditions checkbox
-
-Process:
-Validate all fields
-Hash password
-Auto-receive OTP (email/SMS)
-POST /register
-On success → navigate to Screen 2
+// Create Super Admin
+// A Super Admin can be create Admin
+// Update Admin/ Super Admin
+// Edit Admin/ Super Admin
+// delete Admin
 
 
-Screen 2 — Verify Account
-Fields:
-
-6-digit OTP input boxes
-
-Process:
-User enters code
-POST /verify-otp
-Resend OTP → POST /resend-otp
-On success → navigate to Screen 3
-
-
-Screen 3 — Enable Location
-Fields:
-
-Process:
-
-lat/lng, and address name
-POST/location
-On success → navigate to Screen 4
-
-Screen 4 — Business Information (Step 1/3) 
-Fields:
-
-Shop Name
-Shop License Number
-Contact Email
-Contact Phone
-Process:
-
-Validate fields
-POST business/info
-On success → navigate to Screen 5
-
-
-Screen 5 — Branch Locations (Step 2/3)
-Can add multiple brunch
-Fields:
-
-Branch Name
-Address, lat/lng
-Phone Number
-Availability: Weekly opening hours organized by day. Empale: Sat: 10AM - 6PM
-
-Checkbox: Apply same menu for all branches
-
-Process:
-
-User fills Branch 1 (minimum)
-Optionally add more branches
-POST business/branches
-On success → navigate to Screen 6
-
-
-Screen 6 — Required Documents (Step 3/3) 
-Fields:
-
-Business License upload (PDF/JPG/PNG, max 5MB)
-Shop Logo upload (PDF/JPG/PNG, max 5MB)
-
-Process:
-
-POST business/documents (multipart)
-On success → Registration complete → pending admin approval
-
-
-The process of Customer register:
-
-
-Screen 1 — Sign Up
-Fields:
-Preferred Name
-Email
-Phone Number (+971)
-Password + Confirm Password (eye toggle)
-Terms & Conditions checkbox
-
-Process:
-Validate all fields
-Hash password
-Auto-receive OTP (email/SMS)
-POST /register
-On success → navigate to Screen 2
-
-
-Screen 2 — Verify Account
-Fields:
-
-6-digit OTP input boxes
-
-Process:
-User enters code
-POST /verify-otp
-Resend OTP → POST /resend-otp
-On success → give login token 
 //END
- 
 
+
+ 
 =you can check my project full requirements================================================================
 
 ## Core Features Short overview

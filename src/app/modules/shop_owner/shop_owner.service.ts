@@ -127,9 +127,151 @@ const saveDocuments = async (
   return shopOwner;
 };
 
+// ─── Update Profile ────────────────────────────────────────────────
+const updateProfile = async (
+  userId: string,
+  payload: Record<string, any>,
+  profileImageFile?: Express.Multer.File
+) => {
+  const shopOwner = await ShopOwner.findById(userId);
+  if (!shopOwner) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Shop owner not found");
+  }
+
+  if (profileImageFile) {
+    payload.profile_image = `/images/profile/${profileImageFile.filename}`;
+  }
+
+  const updatedShopOwner = await ShopOwner.findByIdAndUpdate(userId, payload, {
+    new: true,
+    runValidators: true,
+  }).populate("authId", "name email phone_number is_block isActive role");
+
+  return updatedShopOwner;
+};
+
+// ─── Create Branch ─────────────────────────────────────────────────
+const createBranch = async (
+  userId: string,
+  payload: {
+    branch_name: string;
+    address: string;
+    lat: number;
+    lng: number;
+    phone_number: string;
+    availability?: Array<{
+      day: string;
+      open: string;
+      close: string;
+      isClosed: boolean;
+    }>;
+    applyMenuForAll: boolean;
+  }
+) => {
+  const shopOwner = await ShopOwner.findById(userId);
+  if (!shopOwner) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Shop owner not found");
+  }
+
+  const branchData = {
+    shopOwnerId: shopOwner._id,
+    ...payload,
+    availability:
+      payload.availability && payload.availability.length > 0
+        ? payload.availability
+        : DEFAULT_UAE_AVAILABILITY,
+  };
+
+  const branch = await Branch.create(branchData);
+  return branch;
+};
+
+// ─── Delete Branch ─────────────────────────────────────────────────
+const deleteBranch = async (userId: string, branchId: string) => {
+  const shopOwner = await ShopOwner.findById(userId);
+  if (!shopOwner) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Shop owner not found");
+  }
+
+  const branch = await Branch.findOne({
+    _id: branchId,
+    shopOwnerId: shopOwner._id,
+  });
+  if (!branch) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Branch not found");
+  }
+
+  await Branch.findByIdAndDelete(branchId);
+  return { message: "Branch deleted successfully" };
+};
+
+// ─── Update Branch Data ────────────────────────────────────────────
+const updateBranch = async (
+  userId: string,
+  branchId: string,
+  payload: Record<string, any>
+) => {
+  const shopOwner = await ShopOwner.findById(userId);
+  if (!shopOwner) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Shop owner not found");
+  }
+
+  const branch = await Branch.findOne({
+    _id: branchId,
+    shopOwnerId: shopOwner._id,
+  });
+  if (!branch) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Branch not found");
+  }
+
+  const updatedBranch = await Branch.findByIdAndUpdate(branchId, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  return updatedBranch;
+};
+
+// ─── Update Branch Availability ────────────────────────────────────
+const updateBranchAvailability = async (
+  userId: string,
+  branchId: string,
+  payload: {
+    availability: Array<{
+      day: string;
+      open: string;
+      close: string;
+      isClosed: boolean;
+    }>;
+  }
+) => {
+  const shopOwner = await ShopOwner.findById(userId);
+  if (!shopOwner) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Shop owner not found");
+  }
+
+  const branch = await Branch.findOne({
+    _id: branchId,
+    shopOwnerId: shopOwner._id,
+  });
+  if (!branch) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Branch not found");
+  }
+
+  branch.availability = payload.availability;
+  await branch.save();
+
+  return branch;
+};
+
 export const ShopOwnerService = {
   saveLocation,
   saveBusinessInfo,
   saveBranches,
   saveDocuments,
+  updateProfile,
+  createBranch,
+  deleteBranch,
+  updateBranch,
+  updateBranchAvailability,
 };

@@ -31,4 +31,10 @@ export default {
   stripe: {
     stripe_secret_key: process.env.STRIPE_SECRET_KEY,
   },
+  super_admin: {
+    email: process.env.SUPER_ADMIN_EMAIL || 'superadmin@ayah.com',
+    password: process.env.SUPER_ADMIN_PASSWORD || 'superadmin123',
+    name: process.env.SUPER_ADMIN_NAME || 'Super Admin',
+    phone_number: process.env.SUPER_ADMIN_PHONE || '+971500000000',
+  },
 };

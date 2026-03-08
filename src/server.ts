@@ -6,6 +6,7 @@ import { app } from './app';
 import config from './config/index';
 import { errorLogger, logger } from './shared/logger';
 import socket from './socket/socket';
+import { seedSuperAdmin } from './seeds/superAdmin';
 
 process.on('uncaughtException', error => {
   errorLogger.error(error);
@@ -17,6 +18,8 @@ async function main() {
   try {
     await mongoose.connect(config.database_url as string);
     logger.info('DB Connected on Successfully');
+
+    await seedSuperAdmin();
 
     const port =
       typeof config.port === 'number' ? config.port : Number(config.port);

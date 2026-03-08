@@ -52,9 +52,79 @@ const saveDocuments = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// ─── Update Profile ────────────────────────────────────────────────
+const updateProfile = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.user as IReqUser;
+  const files = req.files as { [key: string]: Express.Multer.File[] } | undefined;
+  const profileImageFile = files?.profile_image?.[0];
+  const result = await ShopOwnerService.updateProfile(userId, req.body, profileImageFile);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Profile updated successfully.",
+    data: result,
+  });
+});
+
+// ─── Create Branch ─────────────────────────────────────────────────
+const createBranch = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.user as IReqUser;
+  const result = await ShopOwnerService.createBranch(userId, req.body);
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: "Branch created successfully.",
+    data: result,
+  });
+});
+
+// ─── Delete Branch ─────────────────────────────────────────────────
+const deleteBranch = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.user as IReqUser;
+  const result = await ShopOwnerService.deleteBranch(userId, req.params.branchId);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: result.message,
+  });
+});
+
+// ─── Update Branch Data ────────────────────────────────────────────
+const updateBranch = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.user as IReqUser;
+  const result = await ShopOwnerService.updateBranch(userId, req.params.branchId, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Branch updated successfully.",
+    data: result,
+  });
+});
+
+// ─── Update Branch Availability ────────────────────────────────────
+const updateBranchAvailability = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.user as IReqUser;
+  const result = await ShopOwnerService.updateBranchAvailability(
+    userId,
+    req.params.branchId,
+    req.body
+  );
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Branch availability updated successfully.",
+    data: result,
+  });
+});
+
 export const ShopOwnerController = {
   saveLocation,
   saveBusinessInfo,
   saveBranches,
   saveDocuments,
+  updateProfile,
+  createBranch,
+  deleteBranch,
+  updateBranch,
+  updateBranchAvailability,
 };
