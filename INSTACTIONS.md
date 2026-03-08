@@ -7,8 +7,6 @@ Customer Management
 // get Customer overview: total customar, active customar, avarage order
 
 //END
-
-
  
 =you can check my project full requirements================================================================
 
