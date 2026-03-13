@@ -7,6 +7,7 @@ import config from './config/index';
 import { errorLogger, logger } from './shared/logger';
 import socket from './socket/socket';
 import { seedSuperAdmin } from './seeds/superAdmin';
+import { seedMenuCategory } from './seeds/menuCategory';
 
 process.on('uncaughtException', error => {
   errorLogger.error(error);
@@ -20,6 +21,7 @@ async function main() {
     logger.info('DB Connected on Successfully');
 
     await seedSuperAdmin();
+    await seedMenuCategory();
 
     const port =
       typeof config.port === 'number' ? config.port : Number(config.port);

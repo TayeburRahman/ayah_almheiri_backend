@@ -1,11 +1,6 @@
 //STARTS
 
-Customer Management
-// Get all Customer with paganationas search filter
-// Block/unblock Customer
-// Customer Details by Id
-// get Customer overview: total customar, active customar, avarage order
-
+ 
 //END
  
 =you can check my project full requirements================================================================

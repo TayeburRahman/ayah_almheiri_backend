@@ -2,6 +2,7 @@ import express from 'express';
 import { AuthRoutes } from '../modules/auth/auth.routes';
 import { ShopOwnerRoutes } from '../modules/shop_owner/shop_owner.routes';
 import { AdminRoutes } from '../modules/admin/admin.routes';
+import { MenuCategoryRoutes } from '../modules/menu_category/menu_category.routes';
 
 const router = express.Router();
 
@@ -13,6 +14,10 @@ const moduleRoutes = [
   {
     path: '/shop-owner',
     route: ShopOwnerRoutes,
+  },
+  {
+    path: '/menu-category',
+    route: MenuCategoryRoutes,
   },
   {
     path: '/admin',
